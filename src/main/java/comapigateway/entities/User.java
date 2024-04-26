@@ -1,4 +1,5 @@
-package com_users.entities;
+package comapigateway.entities;
+
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com_users.models.Role;
+import comapigateway.models.Role;
 
 @Entity
 @Table(name = "users")

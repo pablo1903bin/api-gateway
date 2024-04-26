@@ -1,10 +1,10 @@
-package com_users;
+package comapigateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class McsvcUsersApplicationTests {
+class ApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
