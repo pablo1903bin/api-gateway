@@ -1,5 +1,7 @@
 package comapigateway.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import comapigateway.services.UserService;
 @RestController
 @RequestMapping("api/authentication")
 public class AuthenticationController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
 	@Autowired
 	private AuthenticationService authenticationService;

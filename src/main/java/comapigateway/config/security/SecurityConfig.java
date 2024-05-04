@@ -1,5 +1,7 @@
 package comapigateway.config.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,8 @@ import comapigateway.security.jwt.JwtAuthorizationFilter;
 @Configuration
 public class SecurityConfig {
 
+	private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+	
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
@@ -32,6 +36,7 @@ public class SecurityConfig {
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
 			throws Exception {
+		
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 
@@ -47,7 +52,7 @@ public class SecurityConfig {
 		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder);
 
 		AuthenticationManager authenticationManager = auth.build();
-
+		logger.info("Configurando seguridad!   #####################");
 		http.cors();
 		http.csrf().disable();
 		http.authenticationManager(authenticationManager);

@@ -8,6 +8,7 @@ import comapigateway.entities.User;
 import java.util.Collection;
 import java.util.Set;
 
+/*El UserDetails es una interfaz que se conecta a la Db para obtener la informacion del usuario que se esta logueando*/
 public class UserPrincipal implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
