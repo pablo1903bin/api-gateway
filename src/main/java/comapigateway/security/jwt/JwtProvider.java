@@ -10,7 +10,6 @@ import comapigateway.entities.User;
 public interface JwtProvider {
     String generateToken(UserPrincipal auth);
 
-
     String generateToken(User user);
 
     Authentication getAuthentication(HttpServletRequest request);

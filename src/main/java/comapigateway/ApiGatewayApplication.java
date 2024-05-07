@@ -10,7 +10,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @SpringBootApplication
 @EnableEurekaClient
 public class ApiGatewayApplication {
-
+    /* Bean para encriptar mis psswords*/
 	@Bean
 	PasswordEncoder passwordEncoder()
 	{

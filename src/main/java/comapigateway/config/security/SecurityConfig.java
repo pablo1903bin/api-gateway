@@ -61,8 +61,13 @@ public class SecurityConfig {
 		http.authorizeHttpRequests()
 				.antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up", "/swagger-ui/index.html",
 						"/swagger-ui/**")
-				.permitAll().antMatchers(HttpMethod.GET, "/gateway/inmueble").permitAll()
-				.antMatchers("/gateway/inmueble/**").hasRole(Role.ADMIN.name()).anyRequest().authenticated();
+				   .permitAll()
+				.antMatchers(HttpMethod.GET, "/gateway/inmueble")
+				   .permitAll()
+				.antMatchers("/gateway/inmueble/**")
+				   .hasRole(Role.ADMIN.name())
+				   .anyRequest()
+				   .authenticated();
 
 		http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 

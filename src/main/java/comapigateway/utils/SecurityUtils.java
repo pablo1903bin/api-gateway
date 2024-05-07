@@ -5,6 +5,9 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
+/*
+ * Me permitira tranformar mi rol que esta almacenado enmi DB al formato de contexto  spring sec
+ * */
 public class SecurityUtils {
 
 	public static final String ROLE_PREFIX = "ROLE_";
@@ -12,6 +15,7 @@ public class SecurityUtils {
 	public static final String AUTH_TOKEN_TYPE = "Bearer";
 	public static final String AUTH_TOKEN_PREFIX = AUTH_TOKEN_TYPE + " ";
 
+	/* Metodo static que no necesito intanciar la clase para poder usarlo */
 	public static SimpleGrantedAuthority convertToAuthority(String role) {
 		String formattedRole = role.startsWith(ROLE_PREFIX) ? role : ROLE_PREFIX + role;
 		return new SimpleGrantedAuthority(formattedRole);

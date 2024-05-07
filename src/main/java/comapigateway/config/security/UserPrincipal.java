@@ -8,11 +8,16 @@ import comapigateway.entities.User;
 import java.util.Collection;
 import java.util.Set;
 
+
+
+/*Esta clase se unira con la estructura de spring sec y pasara a ser mi clase personalizada de un usuario */
 /*El UserDetails es una interfaz que se conecta a la Db para obtener la informacion del usuario que se esta logueando*/
+
+
 public class UserPrincipal implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
-
+	/* Agrgo los datos que tengo dentro de mi DB Users */
 	private Long id;
 	private String username;
 	transient private String password;

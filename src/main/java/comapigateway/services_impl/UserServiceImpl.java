@@ -28,12 +28,13 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private JwtProvider jwtProvider;
 
+	/*Este metodo me retornara el user guardado con su token*/
 	@Override
 	public User saveUser(User user) {
 
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		user.setRole(Role.USER);
-		user.setFechaCreacion(LocalDateTime.now());
+		user.setPassword(passwordEncoder.encode(user.getPassword()));//Encripto el pass
+		user.setRole(Role.USER); //Por defecto los nuevo seran Solo Users
+		user.setFechaCreacion(LocalDateTime.now());  //Fecha actual del servidor 
 
 		User userCreated = userRepository.save(user);
 
