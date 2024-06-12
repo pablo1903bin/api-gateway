@@ -16,7 +16,7 @@
 	<name>Api-Gateway</name>
 	<description>Api para gestionar la seguridad de api.</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>1.8</java.version>
 		<spring-cloud.version>2021.0.3</spring-cloud.version>
 	</properties>
 	<dependencies>
@@ -125,7 +125,7 @@
 		</repository>
 	</repositories>
 	<build>
-
+	<finalName>api_gateway</finalName>
 		<plugins>
 
 			<plugin>
