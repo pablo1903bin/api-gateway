@@ -43,7 +43,7 @@ public class AuthenticationController {
 
 	@PostMapping("sign-in")
 	public ResponseEntity<?> signIn(@RequestBody User user) {
-		System.out.println("Iniciando login...");
+		System.out.println("login...");
 		return new ResponseEntity<>(authenticationService.signInAndReturnJWT(user), HttpStatus.OK);
 	}
 
