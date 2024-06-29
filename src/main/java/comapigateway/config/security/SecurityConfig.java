@@ -53,19 +53,18 @@ public class SecurityConfig {
 
 		AuthenticationManager authenticationManager = auth.build();
 		logger.info("Configurando seguridad!   #####################");
+		
 		http.cors();
 		http.csrf().disable();
 		http.authenticationManager(authenticationManager);
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http.authorizeHttpRequests()
-				.antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up", "/swagger-ui/index.html",
-						"/swagger-ui/**")
-				   .permitAll()
-				.antMatchers(HttpMethod.GET, "/gateway/inmueble")
-				   .permitAll()
-				.antMatchers("/gateway/inmueble/**")
-				   .hasRole(Role.ADMIN.name())
+				.antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up").permitAll()
+				.antMatchers("/swagger-ui/index.html","/swagger-ui/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/api-curso/all").permitAll()  // Solo listar todos los cursos es publico
+				.antMatchers("/api-curso/**")//El resto se requiere authenticacion
+				   .hasRole(Role.ADMIN.name()) //Y con role admin
 				   .anyRequest()
 				   .authenticated();
 

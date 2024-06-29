@@ -9,6 +9,7 @@ import feign.auth.BasicAuthRequestInterceptor;
 @Configuration
 public class FeignConfiguration {
 
+	/* Crear una coneccion segura entre los mcsvs */
 	@Bean
 	BasicAuthRequestInterceptor basicAuthRequestInterceptor(
 			@Value("${service.security.secure-key-username}") String username,
@@ -17,4 +18,3 @@ public class FeignConfiguration {
 	}
 
 }
-
