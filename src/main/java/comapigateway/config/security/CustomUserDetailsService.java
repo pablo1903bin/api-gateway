@@ -1,5 +1,6 @@
 package comapigateway.config.security;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,27 +22,24 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
 	private UserService userService;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		/*
-		 * Aser la busqueda de un usuario despues setearlo dentro del contexto de mi app
-		 */
-		User user = userService.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("El usuario no fue encontrado:" + username));
+        // Buscar el usuario en el servicio de usuarios
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("El usuario no fue encontrado: " + username));
 
-		/*Un rol es un Authority para spring*/
-		//Un Usuario puede tener varios roles
-		Set<GrantedAuthority> authorities = Set.of(SecurityUtils.convertToAuthority(user.getRole().name()));
+        // Crear un conjunto de autoridades (roles) para el usuario
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(SecurityUtils.convertToAuthority(user.getRole().name()));
 
-		UserPrincipal userPrincipal = new UserPrincipal();
+        // Crear un objeto UserPrincipal y setear los detalles del usuario
+        UserPrincipal userPrincipal = new UserPrincipal();
+        userPrincipal.setId(user.getId());
+        userPrincipal.setAuthorities(authorities);
+        userPrincipal.setPassword(user.getPassword());
+        userPrincipal.setUser(user);
+        userPrincipal.setUsername(username);
 
-		userPrincipal.setId(user.getId());
-		userPrincipal.setAuthorities(authorities);
-		userPrincipal.setPassword(user.getPassword());
-		userPrincipal.setUser(user);
-		userPrincipal.setUsername(username);
-
-		return userPrincipal;
+        return userPrincipal;
 	}
 }
