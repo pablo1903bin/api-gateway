@@ -9,7 +9,7 @@ import java.util.List;
 //Define una interfaz para interactuar con un servicio externo usando Feign Client
 @FeignClient(
 		value = "cursos-service", // El nombre del servicio al que se le hará las solicitudes
-		path = "/api-cursos/curso", // El prefijo del path que se usará en todas las solicitudes de esta interfaz
+		path = "/cursos/curso", // El prefijo del path que se usará en todas las solicitudes de esta interfaz
 	    url="${curso.service.url}", // Comentado: Aquí se podría especificar la URL del servicio en las propiedades
 		configuration = FeignConfiguration.class // Configuración personalizada para Feign (si es necesaria)
 )
@@ -19,7 +19,6 @@ public interface CursoServiceRequest {
 	@PostMapping
 	Object saveCursos(@RequestBody Object requestBody); // Método para guardar un inmueble, tomando el cuerpo de la
 															// solicitud como parámetro
-
 	// Mapea este método a una solicitud HTTP DELETE a "/api/inmueble/{inmuebleId}"
 	@DeleteMapping("{cursoId}")
 	void deleteCursos(@PathVariable("cursoId") Long cursoId); // Método para eliminar un inmueble por su ID

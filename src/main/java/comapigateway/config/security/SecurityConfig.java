@@ -62,6 +62,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests()
 				.antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up").permitAll()
 				.antMatchers("/swagger-ui/index.html","/swagger-ui/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/authentication/login").permitAll()//permitir ñobe acceso ala pai de usuarios guardar de face
 				.antMatchers(HttpMethod.GET, "/api-curso/all").permitAll()  // Solo listar todos los cursos es publico
 				.antMatchers("/api-curso/**")//El resto se requiere authenticacion
 				   .hasRole(Role.ADMIN.name()) //Y con role admin
