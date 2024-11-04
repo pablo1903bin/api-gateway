@@ -26,7 +26,7 @@ import comapigateway.security.jwt.JwtAuthorizationFilter;
 public class SecurityConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-	
+
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
@@ -36,7 +36,7 @@ public class SecurityConfig {
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
 			throws Exception {
-		
+
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 
@@ -53,7 +53,7 @@ public class SecurityConfig {
 
 		AuthenticationManager authenticationManager = auth.build();
 		logger.info("Configurando seguridad!   #####################");
-		
+
 		http.cors();
 		http.csrf().disable();
 		http.authenticationManager(authenticationManager);
@@ -62,9 +62,11 @@ public class SecurityConfig {
 		http.authorizeHttpRequests()
 				.antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up").permitAll()
 				.antMatchers("/swagger-ui/index.html","/swagger-ui/**").permitAll()
-				.antMatchers(HttpMethod.POST, "/authentication/login").permitAll()//permitir ñobe acceso ala pai de usuarios guardar de face
-				.antMatchers(HttpMethod.GET, "/api-curso/all").permitAll()  // Solo listar todos los cursos es publico
-				.antMatchers("/api-curso/**")//El resto se requiere authenticacion
+				.antMatchers(HttpMethod.POST, "/authentication/login").permitAll()
+	            .antMatchers(HttpMethod.GET, "/api/recordatorio/todos").permitAll()
+	            .antMatchers(HttpMethod.GET, "/api/recordatorio/usuario/*").permitAll()
+				.antMatchers(HttpMethod.POST, "/api/recordatorio/crear").permitAll()
+				.antMatchers("/cursos/**")//El resto se requiere authenticacion
 				   .hasRole(Role.ADMIN.name()) //Y con role admin
 				   .anyRequest()
 				   .authenticated();

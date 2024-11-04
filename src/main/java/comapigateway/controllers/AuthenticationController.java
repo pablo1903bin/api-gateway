@@ -17,7 +17,7 @@ import comapigateway.services.UserService;
 @RestController
 @RequestMapping("api/authentication")
 public class AuthenticationController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
 	@Autowired

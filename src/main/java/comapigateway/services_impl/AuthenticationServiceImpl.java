@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import comapigateway.config.security.UserPrincipal;
 import comapigateway.entities.User;
+import comapigateway.models.UserDTO;
 import comapigateway.repositories.UserRepository;
 import comapigateway.security.jwt.JwtProvider;
 import comapigateway.services.AuthenticationService;
@@ -19,7 +20,7 @@ import comapigateway.services.AuthenticationService;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
-	
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -30,28 +31,40 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private UserRepository userRepository;
 
 	@Override
-	public User signInAndReturnJWT(User signInRequest) {
-		System.out.println("validando usuario entrante...");
-		System.out.println("Usuario: " + signInRequest.getUsername());
-		System.out.println("Pass: " + signInRequest.getPassword());
+	public UserDTO signInAndReturnJWT(User signInRequest) {
 
-		// User user = userRepository.
+	    logger.info("validando usuario entrante...");
+	    logger.info("Usuario: " + signInRequest.getUsername());
+	    logger.info("Pass: " + signInRequest.getPassword());
 
-		User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(
-				() -> new UsernameNotFoundException("El usuario no fue encontrado:" + signInRequest.getEmail()));
-		System.out.println("usuario si existe..");
-		System.out.println(user.toString());
+	    User user = userRepository.findByUsername(signInRequest.getUsername()).orElseThrow(
+	            () -> new UsernameNotFoundException("El usuario no fue encontrado:" + signInRequest.getEmail()));
 
-		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), signInRequest.getPassword()));
+	    logger.info("usuario si existe..   *******************  ");
+	    logger.info("Usuario encontrado:  " + user.toString());
 
-		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-		String jwt = jwtProvider.generateToken(userPrincipal);
+	    UsernamePasswordAuthenticationToken authenticationToken =
+	            new UsernamePasswordAuthenticationToken(user.getUsername(), signInRequest.getPassword());
 
-		User sigInUser = userPrincipal.getUser();
-		sigInUser.setToken(jwt);
+	    Authentication authentication = authenticationManager.authenticate(authenticationToken);
+	    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+	    String jwt = jwtProvider.generateToken(userPrincipal);
 
-		return sigInUser;
+	    User authenticatedUser = userPrincipal.getUser();
+	    authenticatedUser.setToken(jwt);
+
+	    // Crear y devolver un UserDTO en lugar de la entidad User
+	    return new UserDTO(
+	        authenticatedUser.getId(),
+	        authenticatedUser.getUsername(),
+	        authenticatedUser.getName(),
+	        authenticatedUser.getApellido(),
+	        authenticatedUser.getTelefono(),
+	        authenticatedUser.getEmail(),
+	        authenticatedUser.getFechaCreacion(),
+	        authenticatedUser.getRole(),
+	        authenticatedUser.getToken()
+	    );
 	}
 
 }
