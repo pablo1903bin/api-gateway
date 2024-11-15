@@ -1,10 +1,14 @@
 package comapigateway.services_impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import comapigateway.entities.Recordatorio;
@@ -18,11 +22,89 @@ public class RecordatorioServiceImpl implements RecordatorioServices {
     @Autowired
     private RecordatorioRepository recordatorioRepository;
     
+    @Override
+    public Recordatorio updateRecordatorio(Recordatorio recordatorio) {
+    	
+        if (recordatorio.getId() == null) {
+            throw new IllegalArgumentException("El ID del recordatorio no puede ser nulo.");
+        }
+ 
+        Recordatorio existingRecordatorio = recordatorioRepository.findById(recordatorio.getId())
+                .orElseThrow(() -> new RuntimeException("Recordatorio no encontrado con ID: " + recordatorio.getId()));
+
+        // Actualiza los campos que no son nulos y valida las entradas
+        if (recordatorio.getNombreMedicamento() != null && !recordatorio.getNombreMedicamento().isEmpty()) {
+            existingRecordatorio.setNombreMedicamento(recordatorio.getNombreMedicamento());
+        }
+        if (recordatorio.getDescripcion() != null) {
+            existingRecordatorio.setDescripcion(recordatorio.getDescripcion());
+        }
+        if (recordatorio.getDosis() != null) {
+            existingRecordatorio.setDosis(recordatorio.getDosis());
+        }
+        if (recordatorio.getMetodoAdministracion() != null) {
+            existingRecordatorio.setMetodoAdministracion(recordatorio.getMetodoAdministracion());
+        }
+        if (recordatorio.getFrecuenciaUnidades() != null && recordatorio.getFrecuenciaUnidades() > 0) {
+            existingRecordatorio.setFrecuenciaUnidades(recordatorio.getFrecuenciaUnidades());
+        }
+        if (recordatorio.getFrecuenciaIntervalo() != null) {
+            existingRecordatorio.setFrecuenciaIntervalo(recordatorio.getFrecuenciaIntervalo());
+        }
+        if (recordatorio.getFechaInicio() != null && !recordatorio.getFechaInicio().isBefore(LocalDate.now())) {
+            existingRecordatorio.setFechaInicio(recordatorio.getFechaInicio());
+        }
+        if (recordatorio.getHoraInicio() != null) {
+            existingRecordatorio.setHoraInicio(recordatorio.getHoraInicio());
+        }
+        if (recordatorio.getDuracionTratamiento() != null) {
+            existingRecordatorio.setDuracionTratamiento(recordatorio.getDuracionTratamiento());
+        }
+        if (recordatorio.getEstado() != null) {
+            existingRecordatorio.setEstado(recordatorio.getEstado());
+        }
+
+        // Guarda los cambios en la base de datos
+        try {
+            return recordatorioRepository.save(existingRecordatorio);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Error al actualizar el recordatorio: conflicto con los datos existentes.", e);
+        }
+    }
+
+    @Override
+    public void deleteRecordatorio(Long idRecordatorio) {
+        Optional<Recordatorio> existingRecordatorio = recordatorioRepository.findById(idRecordatorio);
+        if (!existingRecordatorio.isPresent()) {
+            throw new EntityNotFoundException("El recordatorio con ID " + idRecordatorio + " no existe.");
+        }
+
+        Recordatorio toDelete = existingRecordatorio.get();
+        toDelete.setActiva(false); // Marcado como inactivo
+        recordatorioRepository.save(toDelete); // Guardar los cambios
+    }
+
+    
+    @Override
+    public void deleteById(Integer id) {
+        // Verificar si el registro existe antes de eliminarlo
+        Optional<Recordatorio> recordatorio = recordatorioRepository.findById(id.longValue());
+        if (recordatorio.isPresent()) {
+            // Si existe, proceder con la eliminación
+            recordatorioRepository.deleteById(id.longValue());
+        } else {
+            // Si no existe, lanzar una excepción personalizada
+            throw new RuntimeException("No se encontró el recordatorio con ID: " + id);
+        }
+    }
+
+	
 	@Override
 	public List<Recordatorio> findByIdUser(Long id) {
-	 List<Recordatorio> list =	recordatorioRepository.findByUser(id);
+	 List<Recordatorio> list =	recordatorioRepository.findActiveRecordatoriosByUserIdNative(id);
 		return list;
 	}
+	
 
     @Override
     public RecordatorioDTO saveRecordatorio(RecordatorioDTO recordatorioDTO) {
@@ -40,9 +122,13 @@ public class RecordatorioServiceImpl implements RecordatorioServices {
 
     @Override
     public RecordatorioDTO findById(Integer id) {
-        Optional<Recordatorio> recordatorioOpt = recordatorioRepository.findById(id.longValue());
-        if (recordatorioOpt.isPresent()) {
-            return mapToDTO(recordatorioOpt.get());
+    	  //System.out.println("Buscar recordatorio con id: "+ id);
+    	
+    	  Optional<Recordatorio> recordatorioRepositori = recordatorioRepository.findRecordatorioById(id.longValue());
+  
+        if (recordatorioRepositori.isPresent()) {
+        	System.out.println(recordatorioRepositori.get());
+            return mapToDTO(recordatorioRepositori.get());
         } else {
             throw new RuntimeException("Recordatorio no encontrado con el ID: " + id);
         }
@@ -64,6 +150,7 @@ public class RecordatorioServiceImpl implements RecordatorioServices {
         recordatorio.setFrecuenciaIntervalo(dto.getFrecuenciaIntervalo());
         recordatorio.setFrecuenciaUnidades(dto.getFrecuenciaUnidades());
         recordatorio.setUser(dto.getUserId());
+        recordatorio.setActiva(true);
         return recordatorio;
     }
 
@@ -84,6 +171,5 @@ public class RecordatorioServiceImpl implements RecordatorioServices {
         dto.setUserId(recordatorio.getUser());
         return dto;
     }
-
 
 }

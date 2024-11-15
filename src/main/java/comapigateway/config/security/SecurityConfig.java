@@ -19,6 +19,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import comapigateway.models.Role;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 import comapigateway.security.jwt.JwtAuthorizationFilter;
 
 @EnableWebSecurity
@@ -54,22 +56,24 @@ public class SecurityConfig {
 		AuthenticationManager authenticationManager = auth.build();
 		logger.info("Configurando seguridad!   #####################");
 
-		http.cors();
-		http.csrf().disable();
+        http.cors(withDefaults());
+        http.csrf(csrf -> csrf.disable());
 		http.authenticationManager(authenticationManager);
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		http.authorizeHttpRequests()
-				.antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up").permitAll()
-				.antMatchers("/swagger-ui/index.html","/swagger-ui/**").permitAll()
-				.antMatchers(HttpMethod.POST, "/authentication/login").permitAll()
-	            .antMatchers(HttpMethod.GET, "/api/recordatorio/todos").permitAll()
-	            .antMatchers(HttpMethod.GET, "/api/recordatorio/usuario/*").permitAll()
-				.antMatchers(HttpMethod.POST, "/api/recordatorio/crear").permitAll()
-				.antMatchers("/cursos/**")//El resto se requiere authenticacion
-				   .hasRole(Role.ADMIN.name()) //Y con role admin
-				   .anyRequest()
-				   .authenticated();
+        http.authorizeHttpRequests(requests -> requests
+                .antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up").permitAll()
+                .antMatchers("/swagger-ui/index.html", "/swagger-ui/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/authentication/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/recordatorio/todos").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/recordatorio/usuario/*").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/api/recordatorio/actualizar").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/recordatorio/eliminar/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/recordatorio/crear").permitAll()
+                .antMatchers("/cursos/**")//El resto se requiere authenticacion
+                .hasRole(Role.ADMIN.name()) //Y con role admin
+                .anyRequest()
+                .authenticated());
 
 		http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 

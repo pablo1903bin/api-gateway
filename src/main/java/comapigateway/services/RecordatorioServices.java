@@ -17,4 +17,10 @@ public interface RecordatorioServices {
 	
 	List<Recordatorio> findByIdUser(Long id);
 	
+	 void deleteById(Integer id);
+	 
+	// Método para actualizar usando la entidad Recordatorio
+	Recordatorio updateRecordatorio(Recordatorio recordatorio);
+	
+	void deleteRecordatorio(Long idRecordatorio);
 }

@@ -10,9 +10,8 @@ import comapigateway.models.ApiResponse;
 import comapigateway.models.RecordatorioDTO;
 import comapigateway.services.RecordatorioServices;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("api/recordatorio")
@@ -23,87 +22,63 @@ public class RecordatorioController {
 
 	// Crear un nuevo recordatorio
 	@PostMapping("/crear")
-	public ResponseEntity<ApiResponse<RecordatorioDTO>> createRecordatorio(@RequestBody RecordatorioDTO recordatorioDTO) {
-	    try {
-	        // Guardar el recordatorio
-	        RecordatorioDTO savedRecordatorio = recordatorioServices.saveRecordatorio(recordatorioDTO);
+	public ResponseEntity<ApiResponse<RecordatorioDTO>> createRecordatorio(
+			@RequestBody RecordatorioDTO recordatorioDTO) {
+		RecordatorioDTO savedRecordatorio = recordatorioServices.saveRecordatorio(recordatorioDTO);
 
-	        // Crear la respuesta con el objeto guardado y un código 201
-	        ApiResponse<RecordatorioDTO> respuesta = new ApiResponse<>(
-	            "OK",
-	            "Recordatorio creado con éxito",
-	            savedRecordatorio
-	        );
+		ApiResponse<RecordatorioDTO> respuesta = new ApiResponse<>("OK", "Recordatorio creado con éxito",
+				savedRecordatorio);
 
-	        // Retornar la respuesta con el código HTTP 201 Created
-	        return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
-	    } catch (RuntimeException e) {
-	        // En caso de error, retornar una respuesta con código 500
-	        ApiResponse<RecordatorioDTO> respuestaError = new ApiResponse<>(
-	           "ERROR",
-	            "Ocurrió un error al crear el recordatorio: " + e.getMessage(),
-	            null
-	        );
-	        return new ResponseEntity<>(respuestaError, HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
+		return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
+	}
+
+	// Actualizar un recordatorio existente
+	@PatchMapping("/actualizar")
+	public ResponseEntity<ApiResponse<Recordatorio>> updateRecordatorio(@RequestBody Recordatorio recordatorio) {
+		Recordatorio updatedRecordatorio = recordatorioServices.updateRecordatorio(recordatorio);
+
+		ApiResponse<Recordatorio> respuesta = new ApiResponse<>("OK", "Recordatorio actualizado con éxito",
+				updatedRecordatorio);
+
+		return ResponseEntity.ok(respuesta);
 	}
 
 	// Obtener todos los recordatorios
 	@GetMapping("/todos")
-	public ResponseEntity<?> getAllRecordatorios() {
-		return new ResponseEntity<>(recordatorioServices.listRecordatorios(), HttpStatus.OK);
+	public ResponseEntity<List<RecordatorioDTO>> getAllRecordatorios() {
+		List<RecordatorioDTO> recordatorios = recordatorioServices.listRecordatorios();
+		return ResponseEntity.ok(recordatorios);
 	}
 
 	// Obtener un recordatorio por ID de usuario
 	@GetMapping("/usuario/{id}")
 	public ResponseEntity<ApiResponse<List<Recordatorio>>> getRecordatorioByIdUser(@PathVariable Long id) {
-		try {
-			List<Recordatorio> list = recordatorioServices.findByIdUser(id);
+		List<Recordatorio> recordatorios = recordatorioServices.findByIdUser(id);
 
-			// Si la lista está vacía, retornar un código 404 indicando que no se
-			// encontraron recordatorios
-			if (list.isEmpty()) {
-				ApiResponse<List<Recordatorio>> respuestaNotFound = new ApiResponse<>("OK",
-						"No se encontraron recordatorios para el usuario con ID: " + id, new ArrayList<>());
-				return new ResponseEntity<>(respuestaNotFound, HttpStatus.NOT_FOUND);
-			}
+		ApiResponse<List<Recordatorio>> respuesta = new ApiResponse<>("OK",
+				recordatorios.isEmpty() ? "No se encontraron recordatorios para el usuario con ID: " + id
+						: "Lista de recordatorios obtenida con éxito",
+				recordatorios);
 
-			// Si se encontraron recordatorios, devolverlos con un código 200
-			ApiResponse<List<Recordatorio>> respuesta = new ApiResponse<>("OK",
-					"Lista de recordatorios obtenida con éxito", list);
-
-			return ResponseEntity.ok(respuesta);
-		} catch (RuntimeException e) {
-			// En caso de error, retornar una respuesta con código 500
-			ApiResponse<List<Recordatorio>> respuestaError = new ApiResponse<>("ERROR",
-					"Ocurrió un error al obtener los recordatorios: " + e.getMessage(), new ArrayList<>());
-			return new ResponseEntity<>(respuestaError, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return ResponseEntity.ok(respuesta);
 	}
 
 	// Obtener un recordatorio por ID
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getRecordatorioById(@PathVariable Integer id) {
-		try {
-			RecordatorioDTO recordatorioDTO = recordatorioServices.findById(id);
-			return new ResponseEntity<>(recordatorioDTO, HttpStatus.OK);
-		} catch (RuntimeException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<RecordatorioDTO> getRecordatorioById(@PathVariable Integer id) {
+		RecordatorioDTO recordatorioDTO = recordatorioServices.findById(id);
+		return ResponseEntity.ok(recordatorioDTO);
 	}
 
-	// Eliminar un recordatorio
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteRecordatorio(@PathVariable Integer id) {
-		try {
-			Optional<RecordatorioDTO> recordatorio = Optional.ofNullable(recordatorioServices.findById(id));
-			if (recordatorio.isPresent()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			} else {
-				return new ResponseEntity<>("Recordatorio no encontrado.", HttpStatus.NOT_FOUND);
-			}
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	// Eliminar un recordatorio por ID
+	@DeleteMapping("/eliminar/{id}")
+	public ResponseEntity<ApiResponse<String>> deleteRecordatorio(@PathVariable Long id) {
+		recordatorioServices.deleteRecordatorio(id);
+
+		ApiResponse<String> respuesta = new ApiResponse<>("OK", "Recordatorio eliminado con éxito",
+				"Recordatorio con ID " + id + " ha sido eliminado");
+
+		return ResponseEntity.ok(respuesta);
 	}
+
 }

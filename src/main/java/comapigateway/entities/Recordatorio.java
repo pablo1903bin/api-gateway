@@ -62,14 +62,16 @@ implements Serializable {
 	@Column(name = "fecha_creacion", nullable = false)
 	private LocalDate fechaCreacion;
 
+    @Column(name = "activo", nullable = false)
+    private Boolean activa = true; // Nuevo campo con valor predeterminado
+    
 	// Constructor por defecto
 	public Recordatorio() {
 	}
 
 	public Recordatorio(Long id, Long user, String nombreMedicamento, String descripcion, String dosis,
 			String metodoAdministracion, Integer frecuenciaUnidades, String frecuenciaIntervalo, LocalDate fechaInicio,
-			LocalTime horaInicio, String duracionTratamiento, String estado, LocalDate fechaCreacion) {
-
+			LocalTime horaInicio, String duracionTratamiento, String estado, LocalDate fechaCreacion, Boolean activa) {
 		this.id = id;
 		this.user = user;
 		this.nombreMedicamento = nombreMedicamento;
@@ -83,6 +85,15 @@ implements Serializable {
 		this.duracionTratamiento = duracionTratamiento;
 		this.estado = estado;
 		this.fechaCreacion = fechaCreacion;
+		this.activa = activa;
+	}
+
+	public Boolean getActiva() {
+		return activa;
+	}
+
+	public void setActiva(Boolean activa) {
+		this.activa = activa;
 	}
 
 	public Long getId() {
@@ -195,7 +206,8 @@ implements Serializable {
 				+ ", descripcion=" + descripcion + ", dosis=" + dosis + ", metodoAdministracion=" + metodoAdministracion
 				+ ", frecuenciaUnidades=" + frecuenciaUnidades + ", frecuenciaIntervalo=" + frecuenciaIntervalo
 				+ ", fechaInicio=" + fechaInicio + ", horaInicio=" + horaInicio + ", duracionTratamiento="
-				+ duracionTratamiento + ", estado=" + estado + ", fechaCreacion=" + fechaCreacion + "]";
+				+ duracionTratamiento + ", estado=" + estado + ", fechaCreacion=" + fechaCreacion + ", activa=" + activa
+				+ "]";
 	}
 
 }

@@ -1,12 +1,15 @@
 package comapigateway.models;
 
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class RecordatorioDTO {
+public class RecordatorioDTO implements Serializable{
 
-    private Long userId;
+    private static final long serialVersionUID = 1L;
+    
+	private Long userId;
     private String nombreMedicamento;
     private String descripcion;
     private String dosis;
@@ -18,14 +21,15 @@ public class RecordatorioDTO {
     private String duracionTratamiento;
     private String estado;
     private LocalDate fechaCreacion;
+    private Boolean activo;
 
 	public RecordatorioDTO() {
-		super();
+
 	}
 
 	public RecordatorioDTO(Long userId, String nombreMedicamento, String descripcion, String dosis,
 			String metodoAdministracion, Integer frecuenciaUnidades, String frecuenciaIntervalo, LocalDate fechaInicio,
-			LocalTime horaInicio, String duracionTratamiento, String estado, LocalDate fechaCreacion) {
+			LocalTime horaInicio, String duracionTratamiento, String estado, LocalDate fechaCreacion, Boolean activo) {
 
 		this.userId = userId;
 		this.nombreMedicamento = nombreMedicamento;
@@ -39,6 +43,7 @@ public class RecordatorioDTO {
 		this.duracionTratamiento = duracionTratamiento;
 		this.estado = estado;
 		this.fechaCreacion = fechaCreacion;
+		this.activo = activo;
 	}
 
 	public Long getUserId() {
@@ -137,14 +142,21 @@ public class RecordatorioDTO {
 		this.fechaCreacion = fechaCreacion;
 	}
 
+	public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+
 	@Override
 	public String toString() {
 		return "RecordatorioDTO [userId=" + userId + ", nombreMedicamento=" + nombreMedicamento + ", descripcion="
 				+ descripcion + ", dosis=" + dosis + ", metodoAdministracion=" + metodoAdministracion
 				+ ", frecuenciaUnidades=" + frecuenciaUnidades + ", frecuenciaIntervalo=" + frecuenciaIntervalo
 				+ ", fechaInicio=" + fechaInicio + ", horaInicio=" + horaInicio + ", duracionTratamiento="
-				+ duracionTratamiento + ", estado=" + estado + ", fechaCreacion=" + fechaCreacion + "]\n";
+				+ duracionTratamiento + ", estado=" + estado + ", fechaCreacion=" + fechaCreacion + ", activo=" + activo
+				+ "]";
 	}
-    
-	
 }
