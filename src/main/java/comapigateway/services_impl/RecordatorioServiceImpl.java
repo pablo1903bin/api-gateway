@@ -107,11 +107,11 @@ public class RecordatorioServiceImpl implements RecordatorioServices {
 	
 
     @Override
-    public RecordatorioDTO saveRecordatorio(RecordatorioDTO recordatorioDTO) {
+    public Recordatorio saveRecordatorio(RecordatorioDTO recordatorioDTO) {
         Recordatorio recordatorio = mapToEntity(recordatorioDTO);
-        System.out.println("Rcordatorio antes de guardar:   " + recordatorio.toString());
+        //System.out.println("Rcordatorio antes de guardar:   " + recordatorio.toString());
         Recordatorio savedRecordatorio = recordatorioRepository.save(recordatorio);
-        return mapToDTO(savedRecordatorio);
+        return savedRecordatorio;
     }
 
     @Override

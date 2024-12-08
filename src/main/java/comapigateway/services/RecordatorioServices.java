@@ -9,7 +9,7 @@ import comapigateway.models.RecordatorioDTO;
 
 public interface RecordatorioServices {
 	
-	RecordatorioDTO saveRecordatorio(RecordatorioDTO recordatorio);
+	Recordatorio saveRecordatorio(RecordatorioDTO recordatorio);
 
 	List<RecordatorioDTO> listRecordatorios();
     

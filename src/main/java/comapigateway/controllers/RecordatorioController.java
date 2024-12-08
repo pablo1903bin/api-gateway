@@ -22,11 +22,11 @@ public class RecordatorioController {
 
 	// Crear un nuevo recordatorio
 	@PostMapping("/crear")
-	public ResponseEntity<ApiResponse<RecordatorioDTO>> createRecordatorio(
-			@RequestBody RecordatorioDTO recordatorioDTO) {
-		RecordatorioDTO savedRecordatorio = recordatorioServices.saveRecordatorio(recordatorioDTO);
+	public ResponseEntity<ApiResponse<Recordatorio>> createRecordatorio(@RequestBody RecordatorioDTO recordatorioDTO) {
+		
+		Recordatorio savedRecordatorio = recordatorioServices.saveRecordatorio(recordatorioDTO);
 
-		ApiResponse<RecordatorioDTO> respuesta = new ApiResponse<>("OK", "Recordatorio creado con éxito",
+		ApiResponse<Recordatorio> respuesta = new ApiResponse<>("OK", "Recordatorio creado con éxito",
 				savedRecordatorio);
 
 		return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
