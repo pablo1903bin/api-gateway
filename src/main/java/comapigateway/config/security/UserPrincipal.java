@@ -1,106 +1,164 @@
 package comapigateway.config.security;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority; // Representa permisos o roles asignados al usuario.
+import org.springframework.security.core.userdetails.UserDetails; // Interfaz para proporcionar detalles del usuario.
 
-import comapigateway.entities.User;
+import comapigateway.entities.User; // Entidad que representa al usuario en la base de datos.
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Collection; // Representa una colección de permisos.
+import java.util.Set; // Representa un conjunto de permisos.
 
-
-
-/*Esta clase se unira con la estructura de spring sec y pasara a ser mi clase personalizada de un usuario */
-/*El UserDetails es una interfaz que se conecta a la Db para obtener la informacion del usuario que se esta logueando*/
-
-
+/**
+ * Clase personalizada que implementa la interfaz UserDetails de Spring Security.
+ * Se utiliza para representar al usuario autenticado y sus roles o permisos.
+ */
 public class UserPrincipal implements UserDetails {
 
-	private static final long serialVersionUID = 1L;
-	/* Agrgo los datos que tengo dentro de mi DB Users */
-	private Long id;
-	private String username;
-	transient private String password;
-	transient private User user;
-	private Set<GrantedAuthority> authorities;
+    // SerialVersionUID para la serialización de esta clase.
+    private static final long serialVersionUID = 1L;
 
-	public UserPrincipal() {
-	};
+    /* Atributos personalizados basados en la entidad User. */
+    private Long id; // ID único del usuario.
+    private String username; // Nombre de usuario.
+    transient private String password; // Contraseña del usuario (transient para evitar su serialización).
+    transient private User user; // Referencia a la entidad User (opcional y no serializable).
+    private Set<GrantedAuthority> authorities; // Roles o permisos asignados al usuario.
 
-	public UserPrincipal(Long id, String username, String password, User user, Set<GrantedAuthority> authorities) {
-		this.id = id;
-		this.username = username;
-		this.password = password;
-		this.user = user;
-		this.authorities = authorities;
-	}
+    /**
+     * Constructor por defecto.
+     */
+    public UserPrincipal() {
+    }
 
-	public Long getId() {
-		return id;
-	}
+    /**
+     * Constructor completo para inicializar todos los campos.
+     *
+     * @param id          ID del usuario.
+     * @param username    Nombre de usuario.
+     * @param password    Contraseña del usuario.
+     * @param user        Entidad User asociada.
+     * @param authorities Conjunto de roles o permisos.
+     */
+    public UserPrincipal(Long id, String username, String password, User user, Set<GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.user = user;
+        this.authorities = authorities;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * @return ID del usuario.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    /**
+     * @param id Establece el ID del usuario.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    /**
+     * @return Entidad User asociada.
+     */
+    public User getUser() {
+        return user;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * @param user Establece la entidad User asociada.
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * @param username Establece el nombre de usuario.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setAuthorities(Set<GrantedAuthority> authorities) {
-		this.authorities = authorities;
-	}
+    /**
+     * @param password Establece la contraseña.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return authorities;
-	}
+    /**
+     * @param authorities Establece los roles o permisos del usuario.
+     */
+    public void setAuthorities(Set<GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
+    /**
+     * @return Colección de roles o permisos asignados al usuario.
+     */
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+    /**
+     * @return Contraseña del usuario.
+     */
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+    /**
+     * @return Nombre de usuario.
+     */
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
+    /**
+     * @return true si la cuenta no está expirada.
+     */
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+    /**
+     * @return true si la cuenta no está bloqueada.
+     */
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
+    /**
+     * @return true si las credenciales no están expiradas.
+     */
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "UserPrincipal [id=" + id + ", username=" + username + ", authorities=" + authorities + "]\n";
-	}
+    /**
+     * @return true si la cuenta está habilitada.
+     */
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
+    /**
+     * Representación en cadena del objeto UserPrincipal.
+     *
+     * @return Cadena que contiene detalles básicos del usuario.
+     */
+    @Override
+    public String toString() {
+        return "UserPrincipal [id=" + id + ", username=" + username + ", authorities=" + authorities + "]\n";
+    }
 }
