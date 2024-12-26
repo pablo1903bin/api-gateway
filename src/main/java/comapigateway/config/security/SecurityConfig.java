@@ -23,18 +23,33 @@ import comapigateway.models.Role;
 import static org.springframework.security.config.Customizer.withDefaults;
 import comapigateway.security.jwt.JwtAuthorizationFilter;
 
-@EnableWebSecurity
-@Configuration
+
+/**
+ * Clase de configuración para la seguridad de la aplicación.
+ * Configura la autenticación, autorización, CORS, manejo de sesiones y filtros de seguridad.
+ */
+@EnableWebSecurity // Habilita la integración de Spring Security en la aplicación.
+@Configuration // Marca esta clase como una configuración de Spring.
 public class SecurityConfig {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
+    // Servicio personalizado para cargar los detalles del usuario.
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 
+    // Codificador de contraseñas utilizado para verificar las credenciales.
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
+    /**
+     * Bean que proporciona el AuthenticationManager, necesario para manejar la autenticación.
+     *
+     * @param authenticationConfiguration Configuración de autenticación de Spring Security.
+     * @return AuthenticationManager para manejar la autenticación.
+     * @throws Exception Si ocurre un error al obtener el AuthenticationManager.
+     */
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
 			throws Exception {
@@ -42,11 +57,25 @@ public class SecurityConfig {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 
+	
+    /**
+     * Bean que define el filtro de autorización basado en JWT.
+     *
+     * @return Instancia de JwtAuthorizationFilter.
+     */
 	@Bean
 	JwtAuthorizationFilter jwtAuthorizationFilter() {
 		return new JwtAuthorizationFilter();
 	}
-
+	
+	
+    /**
+     * Configura la cadena de filtros de seguridad (SecurityFilterChain).
+     *
+     * @param http Objeto HttpSecurity para configurar la seguridad HTTP.
+     * @return La configuración de la cadena de filtros.
+     * @throws Exception Si ocurre un error durante la configuración.
+     */
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -81,6 +110,11 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+    /**
+     * Configura CORS para permitir solicitudes desde cualquier origen.
+     *
+     * @return Configuración CORS.
+     */
 	@Bean
 	WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
