@@ -1,29 +1,48 @@
 package comapigateway.requests;
 
+// Importa las clases necesarias para manejar solicitudes HTTP y Feign Client.
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//Este es el mapa que me lleva asia el controller principal de este recurso
-//Define una interfaz para interactuar con un servicio externo usando Feign Client
+/**
+ * Interfaz Feign para interactuar con el servicio de cursos.
+ * Define las operaciones que el cliente puede realizar en el servicio de cursos.
+ */
 @FeignClient(
-		value = "cursos-service", // El nombre del servicio al que se le hará las solicitudes
-		path = "/cursos", // El prefijo del path que se usará en todas las solicitudes de esta interfaz
-	    url="${curso.service.url}", // Comentado: Aquí se podría especificar la URL del servicio en las propiedades
-		configuration = FeignConfiguration.class // Configuración personalizada para Feign (si es necesaria)
+        value = "cursos-service", // Nombre del servicio que representa este cliente Feign.
+        path = "/cursos", // Prefijo que se aplicará a todas las rutas de esta interfaz.
+        url = "${curso.service.url}", // URL del servicio, definida en el archivo de propiedades.
+        configuration = FeignConfiguration.class // Configuración personalizada para este cliente Feign.
 )
 public interface CursoServiceRequest {
 
-	// Mapea este método a una solicitud HTTP POST a "/api/inmueble"
-	@PostMapping
-	Object saveCursos(@RequestBody Object requestBody); // Método para guardar un inmueble, tomando el cuerpo de la
-															// solicitud como parámetro
-	// Mapea este método a una solicitud HTTP DELETE a "/api/inmueble/{inmuebleId}"
-	@DeleteMapping("{cursoId}")
-	void deleteCursos(@PathVariable("cursoId") Long cursoId); // Método para eliminar un inmueble por su ID
+    /**
+     * Guarda un curso en el servicio de cursos.
+     * Envía una solicitud HTTP POST al endpoint "/cursos" del servicio externo.
+     *
+     * @param requestBody El cuerpo de la solicitud que contiene los datos del curso.
+     * @return Un objeto que representa la respuesta del servicio.
+     */
+    @PostMapping
+    Object saveCursos(@RequestBody Object requestBody);
 
-	// Mapea este método a una solicitud HTTP GET a "/api/inmueble"
-	@GetMapping("all")
-	String getAllCursos(); // Método para obtener todos los inmuebles
+    /**
+     * Elimina un curso en el servicio de cursos por su ID.
+     * Envía una solicitud HTTP DELETE al endpoint "/cursos/{cursoId}" del servicio externo.
+     *
+     * @param cursoId El ID del curso que se desea eliminar.
+     */
+    @DeleteMapping("{cursoId}")
+    void deleteCursos(@PathVariable("cursoId") Long cursoId);
+
+    /**
+     * Obtiene todos los cursos desde el servicio de cursos.
+     * Envía una solicitud HTTP GET al endpoint "/cursos/all" del servicio externo.
+     *
+     * @return Una cadena (String) que representa la lista de cursos obtenida.
+     */
+    @GetMapping("all")
+    String getAllCursos();
 }

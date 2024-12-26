@@ -70,6 +70,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.PATCH, "/api/recordatorio/actualizar").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/recordatorio/eliminar/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/recordatorio/crear").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/cooperacion/crear").permitAll()
                 .antMatchers("/cursos/**")//El resto se requiere authenticacion
                 .hasRole(Role.ADMIN.name()) //Y con role admin
                 .anyRequest()

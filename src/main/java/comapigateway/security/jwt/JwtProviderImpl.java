@@ -15,123 +15,150 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import comapigateway.config.security.UserPrincipal;
-import comapigateway.entities.User;
-import comapigateway.utils.SecurityUtils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import comapigateway.config.security.UserPrincipal; // Clase personalizada que representa los detalles del usuario autenticado.
+import comapigateway.entities.User; // Clase que representa la entidad User en el sistema.
+import comapigateway.utils.SecurityUtils; // Clase de utilidades para manejo de seguridad.
+import io.jsonwebtoken.Claims; // Representa los claims (información) dentro de un JWT.
+import io.jsonwebtoken.Jwts; // Clase para trabajar con JWT.
+import io.jsonwebtoken.SignatureAlgorithm; // Algoritmo de firma para JWT.
+import io.jsonwebtoken.security.Keys; // Herramientas para manejar claves de seguridad.
 
-@Component // Marca esta clase como un bean de Spring, lo que permite su inyección en otras partes de la aplicación
+@Component // Declara esta clase como un componente de Spring para inyección de dependencias.
 public class JwtProviderImpl implements JwtProvider {
 
-    // Inyección del secreto JWT desde el archivo de propiedades
-	@Value("${app.jwt.secret}")
-	private String JWT_SECRET;
+    // Secreto JWT configurado en el archivo de propiedades.
+    @Value("${app.jwt.secret}")
+    private String JWT_SECRET;
 
-    // Inyección de la duración de expiración del JWT en milisegundos desde el archivo de propiedades
-	@Value("${app.jwt.expiration-in-ms}")
-	private Long JWT_EXPIRATION_IN_MS;
+    // Duración del token en milisegundos configurada en el archivo de propiedades.
+    @Value("${app.jwt.expiration-in-ms}")
+    private Long JWT_EXPIRATION_IN_MS;
 
-    // Método para generar un token JWT basado en un UserPrincipal
-	@Override
-	public String generateToken(UserPrincipal auth) {
-        // Obtiene los roles o autoridades del usuario y los convierte a una cadena separada por comas
-		String authorities = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.collect(Collectors.joining(","));
+    /**
+     * Genera un token JWT basado en los detalles de un usuario autenticado.
+     *
+     * @param auth Objeto UserPrincipal que contiene información del usuario.
+     * @return Token JWT generado.
+     */
+    @Override
+    public String generateToken(UserPrincipal auth) {
+        // Convierte los roles del usuario en una cadena separada por comas.
+        String authorities = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
-        // Genera una clave de cifrado usando el secreto JWT y el algoritmo HMAC SHA-512
-		Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+        // Crea la clave de firma usando el secreto configurado.
+        Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
 
-        // Crea y devuelve un JWT usando el nombre de usuario, los roles, el ID de usuario y la fecha de expiración
-		return Jwts.builder().setSubject(auth.getUsername()).claim("roles", authorities).claim("userId", auth.getId())
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MS))
-				.signWith(key, SignatureAlgorithm.HS512).compact();
+        // Construye y firma el token JWT.
+        return Jwts.builder()
+                .setSubject(auth.getUsername()) // Establece el nombre de usuario como sujeto.
+                .claim("roles", authorities) // Agrega los roles como claim.
+                .claim("userId", auth.getId()) // Agrega el ID del usuario como claim.
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MS)) // Fecha de expiración.
+                .signWith(key, SignatureAlgorithm.HS512) // Firma con el algoritmo HMAC SHA-512.
+                .compact();
+    }
 
-	}
+    /**
+     * Genera un token JWT basado en una entidad User.
+     *
+     * @param user Entidad User que contiene información del usuario.
+     * @return Token JWT generado.
+     */
+    @Override
+    public String generateToken(User user) {
+        // Crea la clave de firma usando el secreto configurado.
+        Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
 
-    // Sobrecarga del método `generateToken` para generar un JWT basado en un objeto `User`
-	@Override
-	public String generateToken(User user) {
-        // Genera una clave de cifrado usando el secreto JWT y el algoritmo HMAC SHA-512
-		Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+        // Construye y firma el token JWT.
+        return Jwts.builder()
+                .setSubject(user.getUsername()) // Establece el nombre de usuario como sujeto.
+                .claim("roles", user.getRole()) // Agrega los roles como claim.
+                .claim("userId", user.getId()) // Agrega el ID del usuario como claim.
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MS)) // Fecha de expiración.
+                .signWith(key, SignatureAlgorithm.HS512) // Firma con el algoritmo HMAC SHA-512.
+                .compact();
+    }
 
-        // Crea y devuelve un JWT usando el nombre de usuario, los roles, el ID de usuario y la fecha de expiración
-		return Jwts.builder().setSubject(user.getUsername()).claim("roles", user.getRole())
-				.claim("userId", user.getId())
-				.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MS))
-				.signWith(key, SignatureAlgorithm.HS512).compact();
-	}
+    /**
+     * Recupera un objeto de autenticación a partir de una solicitud HTTP.
+     *
+     * @param request Solicitud HTTP que contiene el token JWT.
+     * @return Objeto Authentication o null si no es válido.
+     */
+    @Override
+    public Authentication getAuthentication(HttpServletRequest request) {
+        // Extrae los claims del JWT presente en la solicitud.
+        Claims claims = extractClaims(request);
+        if (claims == null) {
+            return null; // Devuelve null si no se pueden extraer las claims.
+        }
 
-    // Método para obtener la autenticación basada en el JWT extraído de una solicitud HTTP
-	@Override
-	public Authentication getAuthentication(HttpServletRequest request) {
-        // Extrae las claims (reclamaciones) del JWT de la solicitud
-		Claims claims = extractClaims(request);
-		if (claims == null) {
-            // Si no se pueden extraer las claims, devuelve null
-			return null;
-		}
+        // Obtiene el nombre de usuario y el ID del usuario desde las claims.
+        String username = claims.getSubject();
+        Long userId = claims.get("userId", Long.class);
 
-        // Obtiene el nombre de usuario y el ID de usuario desde las claims
-		String username = claims.getSubject();
-		Long userId = claims.get("userId", Long.class);
+        // Convierte los roles en una lista de GrantedAuthority.
+        Set<GrantedAuthority> authorities = Arrays.stream(claims.get("roles").toString().split(","))
+                .map(SecurityUtils::convertToAuthority)
+                .collect(Collectors.toSet());
 
-        // Convierte los roles (almacenados como una cadena separada por comas) en un conjunto de GrantedAuthority
-		Set<GrantedAuthority> authorities = Arrays.stream(claims.get("roles").toString().split(","))
-				.map(SecurityUtils::convertToAuthority).collect(Collectors.toSet());
+        // Crea un objeto UserPrincipal con los detalles del usuario.
+        UserPrincipal userPrincipal = new UserPrincipal();
+        userPrincipal.setUsername(username);
+        userPrincipal.setAuthorities(authorities);
+        userPrincipal.setId(userId);
 
-        // Crea un objeto UserPrincipal y asigna el nombre de usuario, ID y roles
-		UserPrincipal userPrincipal = new UserPrincipal();
-		userPrincipal.setUsername(username);
-		userPrincipal.setAuthorities(authorities);
-		userPrincipal.setId(userId);
+        // Si el nombre de usuario es nulo, no se puede autenticar.
+        if (username == null) {
+            return null;
+        }
 
-        // Si no hay un nombre de usuario, devuelve null
-		if (username == null) {
-			return null;
-		}
+        // Devuelve un objeto Authentication con los detalles del usuario.
+        return new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
+    }
 
-        // Devuelve un token de autenticación con el UserPrincipal y sus roles
-		return new UsernamePasswordAuthenticationToken(userPrincipal, null, authorities);
-	}
+    /**
+     * Verifica si un token JWT presente en la solicitud es válido.
+     *
+     * @param request Solicitud HTTP que contiene el token JWT.
+     * @return true si el token es válido, false en caso contrario.
+     */
+    @Override
+    public boolean isTokenValid(HttpServletRequest request) {
+        // Extrae los claims del JWT.
+        Claims claims = extractClaims(request);
+        if (claims == null) {
+            return false; // El token no es válido si no se pueden extraer las claims.
+        }
 
-    // Método para verificar si un token es válido
-	@Override
-	public boolean isTokenValid(HttpServletRequest request) {
-        // Extrae las claims del JWT desde la solicitud
-		Claims claims = extractClaims(request);
-		if (claims == null) {
-            // Si no se pueden extraer las claims, el token no es válido
-			return false;
-		}
+        // Verifica si la fecha de expiración es anterior a la fecha actual.
+        return !claims.getExpiration().before(new Date());
+    }
 
-        // Verifica si la fecha de expiración del token es anterior a la fecha actual
-		if (claims.getExpiration().before(new Date())) {
-            // Si el token ha expirado, no es válido
-			return false;
-		}
+    /**
+     * Extrae los claims de un token JWT presente en la solicitud HTTP.
+     *
+     * @param request Solicitud HTTP que contiene el token JWT.
+     * @return Objeto Claims o null si no se puede extraer.
+     */
+    private Claims extractClaims(HttpServletRequest request) {
+        // Extrae el token desde la cabecera Authorization.
+        String token = SecurityUtils.extractAuthTokenFromRequest(request);
 
-        // Si las claims existen y no ha expirado, el token es válido
-		return true;
-	}
+        if (token == null) {
+            return null; // Devuelve null si el token no está presente.
+        }
 
-    // Método privado para extraer las claims desde un JWT en la solicitud HTTP
-	private Claims extractClaims(HttpServletRequest request) {
-        // Extrae el token JWT desde la cabecera de autorización de la solicitud
-		String token = SecurityUtils.extractAuthTokenFromRequest(request);
+        // Crea la clave de firma usando el secreto configurado.
+        Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
 
-		if (token == null) {
-            // Si no se encuentra el token, devuelve null
-			return null;
-		}
-
-        // Genera una clave de cifrado usando el secreto JWT y el algoritmo HMAC SHA-512
-		Key key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
-
-        // Devuelve las claims extraídas del token usando la clave de cifrado
-		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-	}
-
+        // Devuelve los claims extraídos del token.
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }
