@@ -12,7 +12,7 @@
 	<groupId>com.gateway</groupId>
 	<artifactId>com-api-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>Api-Gateway</name>
 	<description>Api para gestionar la seguridad de api.</description>
 	<properties>
