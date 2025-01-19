@@ -1,13 +1,9 @@
 package comapigateway.services_impl;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-
 import javax.transaction.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +22,20 @@ public class CooperacionServiceImpl implements CooperacionService {
 
 	@Autowired
 	private CooperacionRepository cooperacionRepository;
+	
 
 	@Transactional
 	@Override
 	public Cooperacion crearCooperacion(CrearCooperacionDto cDto) {
-		logger.info("Iniciando creación de cooperación con datos: {}", cDto);
 
+		logger.info("Iniciando creación de cooperación con datos: {}", cDto);
+		
+		
+	
 		try {
 			// Mapeo del DTO a la entidad Cooperacion
 			Cooperacion cooperacion = mapearDtoAEntidad(cDto);
 
-			// Guarda en la base de datos
-			cooperacionRepository.save(cooperacion);
 
 			logger.info("Cooperación creada con éxito: {}", cooperacion);
 		    return cooperacionRepository.save(cooperacion);
@@ -103,11 +101,11 @@ public class CooperacionServiceImpl implements CooperacionService {
 
 		if (cDto.getUpdatedAt() != null) {
 			DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
-			cooperacion.setUpdatedAt(LocalDateTime
-					.ofInstant(formatter.parse(cDto.getFechaCreacion(), java.time.Instant::from), ZoneOffset.UTC));
+			
+			cooperacion.setUpdatedAt(LocalDateTime.ofInstant(formatter.parse(cDto.getFechaCreacion(), java.time.Instant::from), ZoneOffset.UTC));
 		}
 		
-		cooperacion.setGrupo(3); 
+		cooperacion.setGrupo(cDto.getIdGrupo()); 
 		cooperacion.setCategoria(cDto.getIdCategoria());
 		return cooperacion;
 	}
