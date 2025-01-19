@@ -96,6 +96,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/authentication/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/recordatorio/todos").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/recordatorio/usuario/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/data/inicial/*").permitAll()
                 .antMatchers(HttpMethod.PATCH, "/api/recordatorio/actualizar").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/recordatorio/eliminar/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/recordatorio/crear").permitAll()
