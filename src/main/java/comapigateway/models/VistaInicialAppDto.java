@@ -1,41 +1,31 @@
 package comapigateway.models;
 
-import java.time.LocalDateTime;
-
-import lombok.Data;
-
-
 public class VistaInicialAppDto {
-	
-	private Long id;
-    private Double saldoActual;
-    private Double ingresosTotales;
-    private Double egresosTotales;
-    
-    private Long cooperacionId;
-    private String cooperacionNombre;
-    private String cooperacionDescripcion;
-   
-    private String cooperacionEstado;
-    
- 
 
-    private Double cooperacionMontoActual;
-    private Double cooperacionMontoObjetivo;
-    private Double cooperacionMontoRestante;
-    
-    
-    
+	private Long idCaja;
+	private Double saldoActual;
+	private Double ingresosTotales;
+	private Double egresosTotales;
+
+	private Long cooperacionId;
+	private String cooperacionNombre;
+	private String cooperacionDescripcion;
+
+	private String cooperacionEstado;
+
+	private Double cooperacionMontoActual;
+	private Double cooperacionMontoObjetivo;
+	private Double cooperacionMontoRestante;
+
 	public VistaInicialAppDto() {
-
 
 	}
 
-	public VistaInicialAppDto(Long id, Double saldoActual, Double ingresosTotales, Double egresosTotales,
+	public VistaInicialAppDto(Long idCaja, Double saldoActual, Double ingresosTotales, Double egresosTotales,
 			Long cooperacionId, String cooperacionNombre, String cooperacionDescripcion, String cooperacionEstado,
 			Double cooperacionMontoActual, Double cooperacionMontoObjetivo, Double cooperacionMontoRestante) {
 
-		this.id = id;
+		this.idCaja = idCaja;
 		this.saldoActual = saldoActual;
 		this.ingresosTotales = ingresosTotales;
 		this.egresosTotales = egresosTotales;
@@ -49,11 +39,11 @@ public class VistaInicialAppDto {
 	}
 
 	public Long getId() {
-		return id;
+		return idCaja;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.idCaja = id;
 	}
 
 	public Double getSaldoActual() {
@@ -138,15 +128,12 @@ public class VistaInicialAppDto {
 
 	@Override
 	public String toString() {
-		return "VistaInicialAppDto [id=" + id + ", saldoActual=" + saldoActual + ", ingresosTotales=" + ingresosTotales
-				+ ", egresosTotales=" + egresosTotales + ", cooperacionId=" + cooperacionId + ", cooperacionNombre="
-				+ cooperacionNombre + ", cooperacionDescripcion=" + cooperacionDescripcion + ", cooperacionEstado="
-				+ cooperacionEstado + ", cooperacionMontoActual=" + cooperacionMontoActual
+		return "VistaInicialAppDto [id=" + idCaja + ", saldoActual=" + saldoActual + ", ingresosTotales="
+				+ ingresosTotales + ", egresosTotales=" + egresosTotales + ", cooperacionId=" + cooperacionId
+				+ ", cooperacionNombre=" + cooperacionNombre + ", cooperacionDescripcion=" + cooperacionDescripcion
+				+ ", cooperacionEstado=" + cooperacionEstado + ", cooperacionMontoActual=" + cooperacionMontoActual
 				+ ", cooperacionMontoObjetivo=" + cooperacionMontoObjetivo + ", cooperacionMontoRestante="
 				+ cooperacionMontoRestante + "]";
 	}
-    
-  
-    
 
 }

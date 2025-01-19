@@ -1,11 +1,9 @@
 package comapigateway.services;
 
-import java.util.List;
-
-import comapigateway.models.VistaInicialAppDto;
+import comapigateway.models.CajaDto;
 
 public interface DataInicialService {
 
-	List<VistaInicialAppDto> obtenerDatosIniciales(Long userId, Long groupId);
+	CajaDto obtenerDatosIniciales(Long userId, Long groupId);
 	
 }

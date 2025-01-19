@@ -4,19 +4,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import comapigateway.entities.Group;
+import comapigateway.entities.Caja;
 
 import java.util.List;
 
 @Repository
-public interface CajaCooperacionRepository extends org.springframework.data.repository.Repository<Group, Long> {
+public interface CajaCooperacionRepository extends org.springframework.data.repository.Repository<Caja, Long> {
 
     @Query(value = "SELECT " +
-            "c.id AS id, " +
+    		"CAST(c.id AS BIGINT) AS idCaja, " +
             "c.saldo_actual AS saldoActual, " +
             "c.ingresos_totales AS ingresosTotales, " +
             "c.egresos_totales AS egresosTotales, " +
-            "tc.id AS cooperacionId, " +
+            "CAST(tc.id AS BIGINT) AS cooperacionId, " +
             "tc.nombre AS cooperacionNombre, " +
             "tc.descripcion AS cooperacionDescripcion, " +
             "tc.estado AS cooperacionEstado, " +
