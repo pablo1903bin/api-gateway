@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -91,7 +92,7 @@ public class GlobalExceptionHandler {
         ex.printStackTrace();
 
         // Construye una respuesta con el código 404 y el mensaje de error.
-        ApiResponse<String> response = new ApiResponse<>("404", "Elemento no encontrado", ex.getMessage());
+        ApiResponse<String> response = new ApiResponse<>("ERROR", "Elemento no encontrado", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
     
@@ -107,10 +108,22 @@ public class GlobalExceptionHandler {
         //logger.error("Error: Usuario no encontrado. Detalle: {}", ex.getMessage());
 
         // Construye una respuesta con el código 404 y el mensaje de error.
-        ApiResponse<String> response = new ApiResponse<>("409", ex.getMessage(), null );
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        ApiResponse<String> response = new ApiResponse<>("ERROR", ex.getMessage(), null );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<String>> handleAuthenticationException(AuthenticationException ex) {
+        ApiResponse<String> response = new ApiResponse<>("ERROR", "Credenciales inválidas: " + ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<String>> handleRuntimeException(RuntimeException ex) {
+        ApiResponse<String> response = new ApiResponse<>("ERROR", "Error inesperado: " + ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
 
     /**
      * Maneja cualquier otro error genérico no capturado por los manejadores específicos.
