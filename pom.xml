@@ -12,10 +12,10 @@
 	</parent>
 
 	<groupId>com.gateway</groupId>
-	<artifactId>com-api-gateway</artifactId>
+	<artifactId>com-auth-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Api-Gateway</name>
+	<name>Auth-Service</name>
 	<description>Api para gestionar la seguridad de api.</description>
 
 	<properties>
@@ -149,7 +149,7 @@
 	</repositories>
 
 	<build>
-		<finalName>gateway</finalName>
+		<finalName>auth</finalName>
 		<plugins>
 			<!-- Spring Boot Maven Plugin -->
 			<plugin>
